@@ -11,6 +11,9 @@ const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
+  const [search, setSearch] = useState<string>("")
+  const [searchTerm, setSearchTerm] = useState<string>("")
+
   const [users, setUsers] = useState<EditableUser[]>([]);
   const [update, setUpdate] = useState<boolean>(false);
 
@@ -20,7 +23,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const responce = await axios.get("/list-user");
+        const responce = await axios.get(`/list-user?searchTerm=${searchTerm}`);
         setUsers(responce.data);
       } catch (error) {
         console.log(
@@ -30,7 +33,7 @@ const Dashboard = () => {
       }
     };
     fetchUsers();
-  }, [update]);
+  }, [update, searchTerm]);
 
   const editUser = (index: number) => {
     const user = users[index];
@@ -58,10 +61,23 @@ const Dashboard = () => {
       console.log(error);
     }
   };
+
+  const handleSearch = async () => {
+    try {
+      setSearchTerm(search);
+      setSearch("");
+    } catch (error) {
+      console.log("Cannot get data might be some problem in fetching user");
+    }
+  };
   return (
     <div className="bg-black min-h-screen text-white flex flex-col  items-center">
+      <div className="flex gap-5 items-center">
+        <input type="text" placeholder="search users..." className="border border-white my-4 rounded-md" value={search} onChange={(e)=>setSearch(e.target.value)}/>
+        <button className="py-1 px-4 border border-white rounded-md hover:border-2 transition-all duration-300" onClick={handleSearch}>Search</button>
+      </div>
       <table className="table-auto w-full text-left border-collapse border border-gray-700">
-        <thead>
+        <thead>adminLogin
           <tr>
             <th className="border border-gray-300 px-4 py-2">Profile Pic</th>
             <th className="border border-gray-300 px-4 py-2">Username</th>

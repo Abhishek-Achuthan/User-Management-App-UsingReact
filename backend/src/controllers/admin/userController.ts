@@ -6,8 +6,9 @@ import { AuthenticatedRequest } from "../../middleware/authMiddleware";
 export const listUsers = async(req:AuthenticatedRequest ,res:Response) => {
 
     try {
-        const users = await User.find({})
-    
+        const searchTerm = req?.query?.searchTerm;
+        const users = await User.find({$or:[{username:{'$regex':searchTerm, '$options': "i"}},{email:{'$regex':searchTerm, '$options': "i"}},{phone:{'$regex':searchTerm, '$options': "i"}}]})
+        
         res.status(200).json(users);
     }catch(error) {
         console.log("Error fetching users: " ,error)
